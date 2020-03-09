@@ -1,6 +1,6 @@
 Instructions
 
-    In you terminal from the Rate-Plan file run:
+    In you terminal from the Fuel Rate file run:
     1)npm install
     2)npm start
 
