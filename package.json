@@ -19,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/NahomAmor/FuelRate.git"
   },
-  "homepage": "https://accessuh.uh.edu/login.php",
+  "homepage": "http://localhost:3000/auth",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

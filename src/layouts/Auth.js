@@ -20,6 +20,7 @@ class Auth extends React.Component {
   getRoutes = routes => {
     return routes.map((prop, key) => {
       if (prop.layout === "/auth") {
+        
         return (
           <Route
             path={prop.layout + prop.path}
@@ -33,6 +34,7 @@ class Auth extends React.Component {
     });
   };
   render() {
+    console.log(this.props.layout, this.props.path, this.props.authState);
     if(
       this.props.authState.loggedIn
     ){
@@ -41,6 +43,7 @@ class Auth extends React.Component {
         to="/admin/user-profile"/>
       )
     }
+    else{
     return (
       <>
         <div className="main-content">
@@ -79,7 +82,7 @@ class Auth extends React.Component {
             <Row className="justify-content-center">
               <Switch>
                 {this.getRoutes(routes)}
-                <Redirect from="*" to="/auth/login" />
+                {/* <Redirect from="*" to="/auth/login" /> */}
               </Switch>
             </Row>
           </Container>
@@ -87,6 +90,7 @@ class Auth extends React.Component {
         <AuthFooter />
       </>
     );
+    }
   }
 }
 

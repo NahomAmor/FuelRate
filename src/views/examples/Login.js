@@ -26,6 +26,7 @@ class Login extends React.Component {
   onChange = (stateName, value) => { this.setState({
     [stateName]: value
   })}
+  handleSubmit = (stateName, value) => {this.setState({[stateName]: value})} //allows submission with actions like enter key
   render() {
     return (
       <>
@@ -70,7 +71,7 @@ class Login extends React.Component {
               <div className="text-center text-muted mb-4">
                 <small>Or sign in with credentials</small>
               </div>
-              <Form role="form">
+              <Form onSubmit={()=>{this.props.loginAction(this.state.email, this.state.password)}} role="form">
                 <FormGroup className="mb-3">
                   <InputGroup className="input-group-alternative">
                     <InputGroupAddon addonType="prepend">
@@ -126,7 +127,7 @@ class Login extends React.Component {
               <a
                 className="text-light"
                 href={<Redirect from="*" to="/auth/register" />}
-                onClick={<Redirect from="*" to="/auth/register" />}
+                onClick={e => e.preventDefault()}
               >
                 
                 <small>Create new account</small>
