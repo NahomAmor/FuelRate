@@ -1,5 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 // reactstrap components
 import {
   DropdownMenu,
@@ -19,6 +20,9 @@ import {
 } from "reactstrap";
 
 class AdminNavbar extends React.Component {
+  handleLogout = () => {
+    this.props.logOut()
+  }
   render() {
     return (
       <>
@@ -80,7 +84,7 @@ class AdminNavbar extends React.Component {
                     <span>Support</span>
                   </DropdownItem>
                   <DropdownItem divider />
-                  <DropdownItem href="#pablo" onClick={e => e.preventDefault()}>
+                  <DropdownItem onClick={this.handleLogout}>
                     <i className="ni ni-user-run" />
                     <span>Logout</span>
                   </DropdownItem>
@@ -93,5 +97,13 @@ class AdminNavbar extends React.Component {
     );
   }
 }
-
-export default AdminNavbar;
+const mapStateToProps = state => ({...state});
+const mapDispatchToProps = (dispatch) => {
+  return{
+    logOut: () => {dispatch({
+      type: "logout",
+      payload: false
+    })}
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AdminNavbar));

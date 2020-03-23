@@ -13,6 +13,11 @@ import routes from "routes.js";
 class Auth extends React.Component {
   componentDidMount() {
     document.body.classList.add("bg-default");
+    console.log('component mounted')
+  }
+  componentDidUpdate(prevProps, prevState, props){
+    console.log('component updated');
+    // console.log('current', props, 'previous p' , prevProps, 'previous s' ,prevState);
   }
   componentWillUnmount() {
     document.body.classList.remove("bg-default");
@@ -29,12 +34,13 @@ class Auth extends React.Component {
           />
         );
       } else {
+        console.log('layout is not auth')
         return null;
       }
     });
   };
   render() {
-    console.log(this.props.layout, this.props.path, this.props.authState);
+    console.log(this.props);
     if(
       this.props.authState.loggedIn
     ){
@@ -46,7 +52,7 @@ class Auth extends React.Component {
     else{
     return (
       <>
-        <div className="main-content">
+        <div className="main-content" ref="mainContent">
           <AuthNavbar />
           <div className="header bg-gradient-info py-7 py-lg-8">
             <Container>
@@ -78,11 +84,11 @@ class Auth extends React.Component {
             </div>
           </div>
           {/* Page content */}
-          <Container className="mt--8 pb-5">
+          <Container className="mt--9 pb-6" >
             <Row className="justify-content-center">
               <Switch>
                 {this.getRoutes(routes)}
-                {/* <Redirect from="*" to="/auth/login" /> */}
+                <Redirect from="*" to="/auth/login" />
               </Switch>
             </Row>
           </Container>

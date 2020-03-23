@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import loginAction from "actions/loginAction";
-import { Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 // reactstrap components
 import {
   Button,
@@ -26,14 +26,17 @@ class Login extends React.Component {
   onChange = (stateName, value) => { this.setState({
     [stateName]: value
   })}
-  handleSubmit = (stateName, value) => {this.setState({[stateName]: value})} //allows submission with actions like enter key
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.loginAction(this.state.email, this.state.password)
+  } //allows submission with actions like enter key
   render() {
     return (
       <>
-        <Col lg="5" md="7">
+        <Col lg="6" md="8">
           <Card className="bg-secondary shadow border-0">
             <CardHeader className="bg-transparent pb-5">
-              <div className="text-muted text-center mt-2 mb-3">
+              <div className="text-muted text-center mt-2 mb-4">
                 <small>Sign in with</small>
               </div>
               <div className="btn-wrapper text-center">
@@ -71,9 +74,9 @@ class Login extends React.Component {
               <div className="text-center text-muted mb-4">
                 <small>Or sign in with credentials</small>
               </div>
-              <Form onSubmit={()=>{this.props.loginAction(this.state.email, this.state.password)}} role="form">
+              <Form onSubmit={this.handleSubmit} role="form">
                 <FormGroup className="mb-3">
-                  <InputGroup className="input-group-alternative">
+                  <InputGroup className="input-group-alternative mb-3">
                     <InputGroupAddon addonType="prepend">
                       <InputGroupText>
                         <i className="ni ni-email-83" />
@@ -106,7 +109,7 @@ class Login extends React.Component {
                   </label>
                 </div>
                 <div className="text-center">
-                  <Button className="my-4" color="primary" type="button" onClick={ ()=>{this.props.loginAction(this.state.email, this.state.password)}}>
+                  <Button className="my-4" color="primary" type="submit" >
                     Sign in
                   </Button>
                 </div>
@@ -124,14 +127,12 @@ class Login extends React.Component {
               </a>
             </Col>
             <Col className="text-right" xs="6">
-              <a
-                className="text-light"
-                href={<Redirect from="*" to="/auth/register" />}
-                onClick={e => e.preventDefault()}
+              <Link to="/auth/register">
+              <span
+                className="text-light"                
               >
-                
                 <small>Create new account</small>
-              </a>
+              </span></Link>
             </Col>
           </Row>
         </Col>

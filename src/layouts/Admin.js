@@ -14,7 +14,7 @@ class Admin extends React.Component {
   componentDidUpdate(e) {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
-    this.refs.mainContent.scrollTop = 0;
+    // this.refs.mainContent.scrollTop = 0;
   }
   getRoutes = routes => {
     return routes.map((prop, key) => {
@@ -38,12 +38,14 @@ class Admin extends React.Component {
           routes[i].layout + routes[i].path
         ) !== -1
       ) {
+        console.log(routes[i].name);
         return routes[i].name;
       }
     }
     return "Brand";
   };
   render() {
+    console.log(this.props);
     if(!this.props.authState.loggedIn){
       return( <Redirect to="/auth/login"/> )
     }
@@ -55,7 +57,7 @@ class Admin extends React.Component {
           logo={{
             innerLink: "/admin/index",
             imgSrc: require("assets/img/brand/Fuel-Image.png"),
-            imgAlt: "..."
+            imgAlt: "Side Fuel Image"
           }}
         />
         <div className="main-content" ref="mainContent">

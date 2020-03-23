@@ -19,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/NahomAmor/FuelRate.git"
   },
-  "homepage": "http://localhost:3000/auth",
+  "homepage": "http://localhost:3000/auth/login",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

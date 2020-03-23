@@ -1,5 +1,7 @@
 export default (
-    state={},
+    state={
+        loggedIn: false
+    },
     action
 ) => {
     switch (action.type) {
@@ -17,13 +19,25 @@ export default (
         case "login":
             console.log(
                 "login is ",
-                action.payload
+                action.payload, 
             );
             return{
                 ...state,
                 loggedIn:
                     action.payload
-            } 
+        }
+
+        case "logout":
+            console.log(
+                "login is ",
+                action.payload, 
+            );
+            return{
+                ...state,
+                loggedIn:
+                    action.payload
+        }
+
         default:
             return state;
 

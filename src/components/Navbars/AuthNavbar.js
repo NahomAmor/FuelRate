@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 // reactstrap components
 import {
   UncontrolledCollapse,
@@ -13,8 +13,9 @@ import {
   Col
 } from "reactstrap";
 
-class AdminNavbar extends React.Component {
+class AuthNavbar extends React.Component {
   render() {
+    // console.log(this.props);
     return (
       <>
         <Navbar
@@ -96,4 +97,4 @@ class AdminNavbar extends React.Component {
   }
 }
 
-export default AdminNavbar;
+export default withRouter(AuthNavbar);

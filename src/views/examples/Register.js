@@ -23,10 +23,15 @@ class Register extends React.Component {
     email: "",
     password: ""
   }
-  onChange = (stateName, value) => {this.setState({
-    [stateName]: value
-  })}
+  onChange = (stateName, value) => 
+  {this.setState({
+      [stateName]: value
+    });
+  }
   render() {
+    console.log(this.props, this.state.password.length)
+    // const { len } = this.state.len
+    // const { strength } = (len === 0) ? (<span> none </span>):((len > 6) ? ((len > 8) ? ((len >9) ? (<span className="text-success font-weight-700">strong</span>) : (<span className="text-primary font-weight-700">good</span>)) : (<span className="text-warning font-weight-700">weak</span>)) : (<span className="text-danger font-weight-700">bad</span>))
     return (
       <>
         <Col lg="6" md="8">
@@ -68,9 +73,9 @@ class Register extends React.Component {
             </CardHeader>
             <CardBody className="px-lg-5 py-lg-5">
               <div className="text-center text-muted mb-4">
-                <small>Or sign in with credentials</small>
+                <small>Or sign up with credentials</small>
               </div>
-              <Form role="form">
+              <Form onSubmit={this.handleSubmit} role="form">
                 <FormGroup>
                   <InputGroup className="input-group-alternative mb-3">
                     <InputGroupAddon addonType="prepend">
@@ -101,12 +106,13 @@ class Register extends React.Component {
                     <Input placeholder="Password" type="password" autoComplete="new-password" onChange={ e=>this.onChange("password", e.target.value)}/>
                   </InputGroup>
                 </FormGroup>
-                <div className="text-muted font-italic">
+                {console.log(this.state.password.length)}
+                {
+                (this.state.password.length === 0) ? (<span></span>): (<div className="text-muted font-italic">
                   <small>
-                    password strength:{" "}
-                    <span className="text-success font-weight-700">strong</span>
+                    password strength:  {((this.state.password.length > 6) ? ((this.state.password.length > 8) ? ((this.state.password.includes("1") || this.state.password.includes("2")|| this.state.password.includes("3")|| this.state.password.includes("4")|| this.state.password.includes("5")|| this.state.password.includes("6")|| this.state.password.includes("7")|| this.state.password.includes("8")|| this.state.password.includes("9")|| this.state.password.includes("0")) ? (<span className="text-success font-weight-700">strong</span>) : (<span className="text-primary font-weight-700">good</span>)) : (<span className="text-warning font-weight-700">weak</span>)) : (<span className="text-danger font-weight-700">bad</span>))}
                   </small>
-                </div>
+                </div>)}
                 <Row className="my-4">
                   <Col xs="12">
                     <div className="custom-control custom-control-alternative custom-checkbox">
