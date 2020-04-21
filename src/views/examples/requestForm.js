@@ -29,8 +29,7 @@ import {
 import Header from "components/Headers/Header.js";
 // import { KeyboardDatePicker } from '@material-ui/pickers';
 
-class Request extends React.Component {
-  render() {
+const Requester = (props) => {
     // const [selectedDate, setSelectedDate] = React.useState(new Date('2020-05-18T21:11:54'));
 
     // const handleDateChange = date => {
@@ -46,7 +45,7 @@ class Request extends React.Component {
             <div className="col">
               <Card className="shadow">
                 <CardHeader className="border-0">
-                  <h3 className="mb-0">Request Form</h3>
+                  <h3 className="mb-0"> Quote Request Form </h3>
                 </CardHeader>
                 <CardBody className="px-lg-5 py-lg-5">
                   <div className="text-center text-muted text-red mb-4">
@@ -1017,6 +1016,6 @@ class Request extends React.Component {
       </>
     );
   }
-}
 
-export default Request;
+
+export default Requester;

@@ -1,6 +1,6 @@
 import Index from "views/Index.js";
 import Profile from "views/examples/Profile.js";
-import Request from "views/examples/requestForm";
+import Requester from "views/examples/requestForm";
 import Register from "views/examples/Register.js";
 import Login from "views/examples/Login.js";
 import Icons from "views/examples/Icons.js";
@@ -25,7 +25,7 @@ var routes = [
     path: "/requestsForm",
     name: "Request Form",
     icon: "ni ni-bullet-list-67 text-red",
-    component: Request,
+    component: Requester,
     layout: "/admin"
   },
   {
@@ -54,6 +54,13 @@ var routes = [
     name: "Register",
     icon: "ni ni-circle-08 text-pink",
     component: Register,
+    layout: "/auth"
+  },
+  {
+    path: "/create-account",
+    name: "Create",
+    icon: "ni ni-circle-08 text-pink",
+    component: Profile,
     layout: "/auth"
   }
 ];

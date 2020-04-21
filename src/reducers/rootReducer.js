@@ -1,8 +1,15 @@
 import { combineReducers } from "redux" ;
 import authReducer from "reducers/authReducer";
-import rateRequestReducer from "reducers/rateRequestReducer";
-
-export default combineReducers({
+import rateReducer from "reducers/rateReducer";
+import { firestoreReducer } from 'redux-firestore';
+import { firebaseReducer } from 'react-redux-firebase';
+// import { reducer as reduxFormReducer } from 'redux-form';
+const rootReducer = combineReducers({
     authState: authReducer,
-    rateRequestState: rateRequestReducer
+    rateState: rateReducer,
+    firestore: firestoreReducer,
+    firebase: firebaseReducer
+    // form: reduxFormReducer
 });
+
+export default rootReducer;

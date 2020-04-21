@@ -3,20 +3,17 @@ import React from "react";
 import { NavLink as NavLinkRRD, Link } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
+import { connect } from "react-redux";
+import { logOut } from '../../actions/loginActions';
 
 // reactstrap components
 import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
   Collapse,
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
   DropdownToggle,
-  FormGroup,
+  // FormGroup,
   Form,
   Input,
   InputGroupAddon,
@@ -28,8 +25,6 @@ import {
   NavItem,
   NavLink,
   Nav,
-  Progress,
-  Table,
   Container,
   Row,
   Col
@@ -83,6 +78,9 @@ class Sidebar extends React.Component {
       }
     });
   };
+  handleLogout = () => {
+    this.props.logOut()
+  }
   render() {
     const { bgColor, routes, logo } = this.props;
     let navbarBrandProps;
@@ -171,7 +169,7 @@ class Sidebar extends React.Component {
                   <span>Support</span>
                 </DropdownItem>
                 <DropdownItem divider />
-                <DropdownItem href="#pablo" onClick={e => e.preventDefault()}>
+                <DropdownItem to="/auth/login" tag={Link} onClick={this.handleLogout}>
                   <i className="ni ni-user-run" />
                   <span>Logout</span>
                 </DropdownItem>
@@ -202,6 +200,7 @@ class Sidebar extends React.Component {
                     type="button"
                     onClick={this.toggleCollapse}
                   >
+                    Close
                     <span />
                     <span />
                   </button>
@@ -229,31 +228,11 @@ class Sidebar extends React.Component {
             {/* Divider */}
             <hr className="my-3" />
             {/* Heading */}
-            <h6 className="navbar-heading text-muted">Documentation</h6>
+            <h6 className="navbar-heading text-muted">Options</h6>
             {/* Navigation */}
             <Nav className="mb-md-3" navbar>
-              <NavItem>
-                <NavLink >
-                  <i className="ni ni-spaceship" />
-                  Getting started
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink >
-                  <i className="ni ni-palette" />
-                  Foundation
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink >
-                  <i className="ni ni-ui-04" />
-                  Components
-                </NavLink>
-              </NavItem>
-            </Nav>
-            <Nav className="mb-md-3" navbar>
-              <NavItem className="loggout">
-                <NavLink >
+              <NavItem className="loggout" onClick={this.handleLogout}>
+                <NavLink to="/auth/login" tag={Link} >
                   <i className="ni ni-spaceship" />
                   Log Out
                 </NavLink>
@@ -287,4 +266,10 @@ Sidebar.propTypes = {
   })
 };
 
-export default Sidebar;
+const mapStateToProps = state => ({...state});
+const mapDispatchToProps = (dispatch) => {
+  return{
+    logOut: () => dispatch(logOut())
+}};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);

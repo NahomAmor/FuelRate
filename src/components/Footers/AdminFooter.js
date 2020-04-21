@@ -1,7 +1,7 @@
 import React from "react";
 
 // reactstrap components
-import { Container, Row, Col, Nav, NavItem, NavLink } from "reactstrap";
+import { Row, Col, Nav, NavItem, NavLink } from "reactstrap";
 
 class Footer extends React.Component {
   render() {
@@ -15,6 +15,7 @@ class Footer extends React.Component {
                 className="font-weight-bold ml-1"
                 rel="noopener noreferrer"
                 target="_blank"
+                href="#blank"
               >
                 Fuel Raters
               </a>

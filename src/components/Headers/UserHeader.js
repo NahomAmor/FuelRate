@@ -1,10 +1,11 @@
 import React from "react";
+// import { connect } from 'react-redux';
 
 // reactstrap components
-import { Button, Container, Row, Col } from "reactstrap";
+import { Container, Row, Col } from "reactstrap";
 
-class UserHeader extends React.Component {
-  render() {
+const UserHeader = (props) => {
+    // const { profile, registered } = this.props;
     return (
       <>
         <div
@@ -23,17 +24,17 @@ class UserHeader extends React.Component {
           <Container className="d-flex align-items-center" fluid>
             <Row>
               <Col lg="7" md="10">
-                <h1 className="display-2 text-white">Hello John</h1>
+                <h1 className="display-2 text-white">Hey there, {props.profile.UserName}!</h1>
                 <p className="text-white mt-0 mb-5">
                   This is your profile page. You can use your Dashboard to fill out a request or view previous reports!
                 </p>
-                <Button
+                {/* <Button
                   color="info"
                   href="#pablo"
                   onClick={e => e.preventDefault()}
                 >
                   Edit profile
-                </Button>
+                </Button> */}
               </Col>
             </Row>
           </Container>
@@ -41,6 +42,11 @@ class UserHeader extends React.Component {
       </>
     );
   }
-}
+  // const mapStateToProps = (state) => {
+  //   return{
+  //     profile: state.firebase.profile
+  //     // authError: state.authState.authError
+  //   }
+  // };
 
-export default UserHeader;
+export default (UserHeader);

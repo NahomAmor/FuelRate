@@ -7,17 +7,14 @@ import { connect } from "react-redux";
 // core components
 import AuthNavbar from "components/Navbars/AuthNavbar.js";
 import AuthFooter from "components/Footers/AuthFooter.js";
-
+import { logOut } from "actions/loginActions";
+// import { getProfiles } from "actions/getProfiles";
 import routes from "routes.js";
 
 class Auth extends React.Component {
   componentDidMount() {
     document.body.classList.add("bg-default");
-    console.log('component mounted')
-  }
-  componentDidUpdate(prevProps, prevState, props){
-    console.log('component updated');
-    // console.log('current', props, 'previous p' , prevProps, 'previous s' ,prevState);
+    // console.log('component mounted')
   }
   componentWillUnmount() {
     document.body.classList.remove("bg-default");
@@ -34,22 +31,26 @@ class Auth extends React.Component {
           />
         );
       } else {
-        console.log('layout is not auth')
+        // console.log('layout is not auth :', prop.layout, prop.path);
         return null;
       }
     });
   };
   render() {
-    console.log(this.props);
+    console.log("firebase", this.props.firebase, "\n authstate", this.props.authStat, "other", this.props);
+    const{ signedUp, authState, auth } = this.props;
     if(
-      this.props.authState.loggedIn
+      auth.uid && authState.loggedIn
     ){
-      return(
-        <Redirect
-        to="/admin/user-profile"/>
-      )
+      if(signedUp){ 
+          // console.log("signup auth check: ");
+        } else{
+          // console.log("auth authstate:", authState);
+          
+          return(<Redirect to="/admin/user-profile"/>);
+        }
     }
-    else{
+    
     return (
       <>
         <div className="main-content" ref="mainContent">
@@ -59,10 +60,7 @@ class Auth extends React.Component {
               <div className="header-body text-center mb-7">
                 <Row className="justify-content-center">
                   <Col lg="5" md="6">
-                    <h1 className="text-white">Welcome</h1>
-                    <p className="text-lead text-light">
-                      Get a free estimate Today!
-                    </p>
+                    { signedUp ? (<h1 className="text-white">You have been Registered! <br/>Login to complete your Account:</h1>) : ((<h1 className="text-white">Welcome, <br/>Get a free estimate Today!</h1>))}
                   </Col>
                 </Row>
               </div>
@@ -87,8 +85,8 @@ class Auth extends React.Component {
           <Container className="mt--9 pb-6" >
             <Row className="justify-content-center">
               <Switch>
-                {this.getRoutes(routes)}
-                <Redirect from="*" to="/auth/login" />
+                {this.getRoutes(routes)}                
+                {(<Redirect from="*" to="/auth/login" />)}
               </Switch>
             </Row>
           </Container>
@@ -98,8 +96,22 @@ class Auth extends React.Component {
     );
     }
   }
+
+
+const mapStateToProps = (state) => {
+  // console.log(state)
+  return{
+    ...state,
+    registered: state.authState.registered,
+    signedUp: state.authState.signedUp,
+    authState: state.authState,
+    auth: state.firebase.auth,
+    rateState: state.rateState
+  }
 }
-
-const mapStateToProps = state => ({...state});
-
-export default connect(mapStateToProps,{})(Auth);
+const mapDispatchToProps = (dispatch) => {
+  return{
+    logOut: () => dispatch(logOut())
+    // getProfiles: (id) => dispatch(getProfiles(id))
+}};
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);
