@@ -5,27 +5,27 @@ import React from "react";
 // import { compose } from 'redux'
 // reactstrap components
 import {
-  Button,
+  // Button,
   Card,
   CardHeader,
   CardBody,
   Row,
   Col
 } from "reactstrap";
-import { Redirect } from "react-router-dom";
+// import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 
-const handleEdit= (getProfile) =>{
-  return (<Redirect registered={getProfile}  to="/admin/user-profile"/>);
+// const handleEdit= (getProfile) =>{
+//   return (<Redirect registered={getProfile}  to="/admin"/>);
 
-}
+// }
 
 const UserProfile = (props) => {
-    const { profile, registered, getProfile } = props;
+    // const { profile, registered, getProfile } = props;
     return (
       <>
-        <Col className="order-xl-2 mb-5 mb-xl-0" xl="4">
-              <Card className="card-profile shadow">
+        <Col className="order-xl-2 mb-8 mb-xl-3" xl="9" >
+              <Card className="card-profile shadow" style={{minWidth: "700px"}}>
                 <Row className="justify-content-center">
                   <Col className="order-lg-2" lg="3">
                     <div className="card-profile-image">
@@ -33,7 +33,7 @@ const UserProfile = (props) => {
                         <img
                           alt="..."
                           className="rounded-circle"
-                          src={require("assets/img/theme/team-4-800x800.jpg")}
+                          src={require("assets/img/theme/profile.png")}
                         />
                       </a>
                     </div>
@@ -84,27 +84,24 @@ const UserProfile = (props) => {
                       {props.profile.FullName}
                       <span className="font-weight-light">, 27</span>
                     </h3>
-                    <div className="h5 font-weight-300">
+                    <div className="h5 font-weight-500">
                       <i className="ni location_pin mr-2" />
-                      {props.profile.State, props.profile.City}
+                      {props.profile.State}, { props.profile.City }
                     </div>
-                    {/* <div className="h5 mt-4">
+                    <div className="h5 mt-4">
                       <i className="ni business_briefcase-24 mr-2" />
-                      Solution Manager - Creative Tim Officer
+                      {props.profile.Zipcode}
                     </div>
                     <div>
                       <i className="ni education_hat mr-2" />
-                      University of Computer Science
+                      {props.profile.AboutMe}
                     </div>
                     <hr className="my-4" />
                     <p>
                       Ryan — the name taken by Melbourne-raised, Brooklyn-based
                       Nick Murphy — writes, performs and records all of his own
                       music.
-                    </p> */}
-                    <Button color= "primary" type="submit" onClick={ () => handleEdit(getProfile)}>
-                      Edit Profile
-                    </Button>
+                    </p>
                   </div>
                 </CardBody>
               </Card>
@@ -114,8 +111,8 @@ const UserProfile = (props) => {
   }
   const mapStateToProps = (state) => {
     return{
-      profile: state.firebase.profile,
-      getProfile: true
+      profile: state.firebase.profile
+      // getProfile: true
       // authError: state.authState.authError
     }
   };

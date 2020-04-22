@@ -32,47 +32,6 @@ export const logOut = () => {
   }
 }
 
-// export const createUser = (name, email, password) => {
-//   return(dispatch, getState, {getFirebase, getFirestore}) => {
-//     const firebase = getFirebase();
-//     const database = firebase.database().ref();
-//     const userDetailsRef = database.child("user-details");
-//     // const userDetailsRef = databaseRef.child("user-details");
-//     userDetailsRef.orderByChild('userName').equalTo(name).on("value", function(snapshot){
-//       if (snapshot.exists()) {
-//           console.log("exists");
-//           dispatch({
-//               type:"false_register",
-//               payload: false
-//           })
-//       }else{
-//          console.log("doesn't exist");
-//          firebase.auth().signInAnonymously().then(function(user){
-//               userDetailsRef.push().set({
-//                   userId: user.user.uid,
-//                   userName: name,
-//                   passWord: password
-//               });
-//               dispatch({
-//                   type:"register",
-//                   payload: true
-//               })
-//           }).catch(function(error){
-//               // Handle Errors here.
-//               var errorCode = error.code;
-//               // var errorMessage = error.message;
-          
-//               if (errorCode === 'auth/operation-not-allowed') {
-//               alert('You must enable Anonymous auth in the Firebase Console.');
-//               } else {
-//               console.error(error);
-//               }
-//           })
-//       }
-//     });
-
-//   }
-// }
 
 export const signUp = ( credentials ) => {
   return(dispatch, getState, {getFirebase, getFirestore}) => {

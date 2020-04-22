@@ -1,11 +1,16 @@
 import React from "react";
-
+import { firestoreConnect } from 'react-redux-firebase';
+import { compose } from 'redux';
+import { addRequestAction } from "actions/addRequestAction";
+import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 // reactstrap components
 import {
   Badge,
   Card,
   CardHeader,
   CardFooter,
+  Button,
   CardBody,
   DropdownMenu,
   DropdownItem,
@@ -29,12 +34,88 @@ import {
 import Header from "components/Headers/Header.js";
 // import { KeyboardDatePicker } from '@material-ui/pickers';
 
-const Requester = (props) => {
-    // const [selectedDate, setSelectedDate] = React.useState(new Date('2020-05-18T21:11:54'));
+class Requester extends React.Component{
+    state = {
+      date: new Date(),
+      Gallons: undefined,
+      Address: undefined,
+      SuggestedPrice: undefined,
+      TotalDue: undefined,
+      formErrors: {
+        date: null,
+        Gallons: null,
+        Address: undefined,
+        SuggestedPrice: undefined,
+        TotalDue: undefined,
+        valid: false
+      },
+      valid: false
 
-    // const handleDateChange = date => {
-    //   setSelectedDate(date);
-    // };
+    }
+    onChange = (name, value) => {
+      let formErrors = { ...this.state.formErrors };
+      const {  date, Gallons} = this.state;
+      switch (name) {
+        case "date":
+          formErrors.date = value.length === 0 ? "* Required" : null;
+          break;
+        case "Gallons":
+            formErrors.Gallons = value.length === 0 ? "* Required" : null;
+            break;
+        // case "Address":
+        //   formErrors.Address = value.length === 0 ? "* Required" : null;
+        //   break;
+        // case "SuggestedPrice":
+        //   formErrors.SuggestedPrice = value.length === 0 ? "* Required" : null;
+        //   break;
+        // case "TotalDue":
+        //   formErrors.TotalDue = value.length === 0 ? "* Required" : null;
+        //   break;
+        default:
+          break;
+      }
+      formErrors.valid = ((formErrors.date === null && date !== null) && (formErrors.Gallons === null && Gallons !== 0) ? null : "Incomplete! Please make sure all requirements are met.")
+      this.setState({
+        [name]: value,
+        formErrors,
+        valid: ( Gallons !== undefined && date !== undefined)
+      });
+    }
+    handleSubmit = (e) => 
+    {
+      e.preventDefault();
+      let formErrors = { ...this.state.formErrors };
+      let requests ={ ...this.props.Requests };
+      const { date, Gallons, Address,  SuggestedPrice, TotalDue } = this.state;
+      let info ={
+        date: date===undefined ? requests.date : date,
+        Gallons: Gallons===undefined ? requests.Gallons : Gallons,
+        Address: Address===undefined ? requests.Address : Address,
+        SuggestedPrice: SuggestedPrice===undefined ? requests.SuggestedPrice : SuggestedPrice,
+        TotalDue: TotalDue===undefined ? requests.TotalDue : TotalDue
+      };
+      this.setState({
+        ...info
+      });
+      if(formErrors.valid === null){
+        this.props.addRequestAction(info);
+        // this.setState({
+        //   collapse: false,
+
+        // }); 
+        return(<Redirect to="/admin/requestsForm" />)
+      }
+    }
+    handleGetPrice= (e) => 
+    {
+
+    }
+    handleDateChange = date => {
+      this.setState({date});
+    };
+  render() {
+    const { profile } = this.props;
+    console.log("Request form info", this.state, this.props)
     return (
       <>
         <Header />
@@ -45,7 +126,7 @@ const Requester = (props) => {
             <div className="col">
               <Card className="shadow">
                 <CardHeader className="border-0">
-                  <h3 className="mb-0"> Quote Request Form </h3>
+                  <h3 className="mb-0 text-center"> Quote Request Form </h3>
                 </CardHeader>
                 <CardBody className="px-lg-5 py-lg-5">
                   <div className="text-center text-muted text-red mb-4">
@@ -67,9 +148,9 @@ const Requester = (props) => {
                             </label>
                             <Input
                               className="form-control-alternative"
-                              defaultValue="100"
-                              id="input-username"
-                              placeholder="Username"
+                              defaultValue={100}
+                              id="input-amount"
+                              placeholder={100}
                               type="number"
                               required
                               label="Required"
@@ -88,7 +169,7 @@ const Requester = (props) => {
                             </label>
                             <Input
                               className="form-control-alternative"
-                              defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
+                              defaultValue={profile.MainAddress}
                               id="input-address"
                               placeholder="Delivery Address"
                               disabled
@@ -106,24 +187,11 @@ const Requester = (props) => {
                             >
                               Delivery Date
                             </label>
-                            {/* <KeyboardDatePicker
-                              disableToolbar
-                              variant="inline"
-                              format="MM/dd/yyyy"
-                              margin="normal"
-                              id="date-picker-inline"
-                              label="Date picker inline"
-                              value={selectedDate}
-                              onChange={handleDateChange}
-                              KeyboardButtonProps={{
-                                'aria-label': 'change date',
-                              }}
-                            /> */}
                             <Input
                               className="form-control-alternative"
-                              defaultValue="'2020-05-18T21:11:54'"
-                              id="input-username"
-                              placeholder="Username"
+                              defaultValue={this.state.date}
+                              id="input-date"
+                              placeholder="MM/DD/YYYY"
                               type="date"
                               required
                               label="Required"
@@ -144,9 +212,9 @@ const Requester = (props) => {
                             <Input
                               disabled
                               className="form-control-alternative"
-                              defaultValue="$ 2000"
-                              id="input-username"
-                              placeholder="Username"
+                              defaultValue={'$'+ 2000}
+                              id="input-currency"
+                              placeholder= {2000}
                               type="currency"
                               required
                               label="Required"
@@ -166,14 +234,21 @@ const Requester = (props) => {
                             <Input
                               disabled
                               className="form-control-alternative"
-                              defaultValue="$ 1000"
-                              id="input-username"
-                              placeholder="Username"
+                              defaultValue={'$'+ 1000}
+                              id="input-currency"
+                              placeholder={1000}
                               type="currency"
                               required
                               label="Required"
                             />
                           </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                        <Button className="mt-4" color="primary" type="submit" >
+                        Submit
+                      </Button>
                         </Col>
                       </Row>
                     </div>
@@ -1016,6 +1091,21 @@ const Requester = (props) => {
       </>
     );
   }
+}
+const mapStateToProps = (state) => {
+  console.log(state)
+  return{
+    ...state,
+    profile: state.firebase.profile,
+    Requests: state.firebase
+  }
+};
 
-
-export default Requester;
+const mapDispatchToProps = (dispatch) => {
+  return{
+    addRequestAction: (info) => dispatch( addRequestAction(info))
+  }
+};
+export default compose(connect(mapStateToProps, mapDispatchToProps), firestoreConnect([
+  { collection: 'Requests' }
+]))(Requester);

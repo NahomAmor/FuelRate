@@ -7,6 +7,7 @@ import { applyMiddleware, createStore, compose } from "redux";
 import thunk from "redux-thunk";
 // import { verifyAuth } from "./actions/";
 import rootReducer from "reducers/rootReducer";
+import * as serviceWorker from './serviceWorker';
 import { reduxFirestore, getFirestore } from 'redux-firestore';
 import { reactReduxFirebase, getFirebase } from 'react-redux-firebase';
 // import { ReactReduxFirebaseProvider } from "react-redux-firebase";
@@ -42,5 +43,6 @@ store.firebaseAuthIsReady.then(() =>{
     </Provider>,
     document.getElementById("root")
   );
+  serviceWorker.register();
 })
 

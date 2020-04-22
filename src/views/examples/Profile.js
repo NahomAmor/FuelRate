@@ -13,7 +13,7 @@ import {
   FormGroup,
   Form,
   Input,
-  // InputGroup,
+  Collapse,
   FormFeedback,
   Container,
   Row,
@@ -47,21 +47,21 @@ class Profile extends React.Component {
       Email: null,
       State: null,
       City: null,
-      MainAddress: null,
+      MainAddress:null,
       Address2: null,
       Zipcode: null,
       AboutMe: null,
       valid: null
     },
-    model: true,
+    collapse: false,
     nested: true,
-    valid: false
+    valid: false,
+    status: "Closed"
   }
 
   onChange = (name, value) => {
     let formErrors = { ...this.state.formErrors };
     const {  Email, State, Zipcode, FullName,  MainAddress, City } = this.state;
-    console.log(name, value, value.length);
     switch (name) {
       case "Email":
         formErrors.Email = value.length === 0 ? "* Required" : (emailRegex.test(value) ? null : "invalid email address");
@@ -110,11 +110,28 @@ class Profile extends React.Component {
       UserName:  UserName,
       AboutMe: AboutMe,
       nested: false,
-      formErrors,
-      value: false
+      formErrors: {
+        FullName: "* Required",
+        State: "* Required",
+        City: "* Required",
+        MainAddress: "* Required",
+        Zipcode: "* Required",
+      },
+      collapse: true,
+      valid: false
     });
   }
-  toggle = () => this.setState({model: false});
+  onEntering = () => this.setState({status: 'Opening...'});
+
+  onEntered = () => this.setState({status: 'Opened'});
+
+  onExiting = () => this.setState({status: 'Closing...'});
+
+  onExited = () => this.setState({status: 'Closed'});
+  editProfile = (e) => {
+    e.preventDefault();
+    const expand = this.state.collapse
+    this.setState({collapse: !expand ? true : false});}
   handleSubmit = (e) => 
   {
     e.preventDefault();
@@ -136,36 +153,47 @@ class Profile extends React.Component {
       ...info
     });
     if(formErrors.valid === null){
-      this.toggle();
-      this.props.updateProfile(info); 
-      return(<Redirect to="/admin/index" />)
+      this.props.updateProfile(info);
+      this.setState({
+        collapse: false,
+
+      }); 
+      return(<Redirect to="/admin/requestsForm" />)
     }
   }
 
 
   render() {
     const { profile, registered } = this.props;
-    const { FullName, UserName, Email, State, City, MainAddress, Address2, Zipcode, AboutMe, formErrors } = this.state;
+    const { FullName, UserName, Email, State, City, MainAddress, Address2, Zipcode, AboutMe, formErrors, collapse } = this.state;
     return (
       <>
         <UserHeader profile={profile} />
+        <Container className="mt--7" fluid>
         {/* test = {(Email === undefined) ? (this.handleinitial(profile)) : undefined }; */}
         {/* Page content */}
-        {(registered || this.props.getProfile) ? 
-        // <Container className="mt--7" fluid>
-        // <div class="model-dialog" role="document">
-        <Modal isOpen={this.state.model} fade={false} toggle={this.handleSubmit} contentClassName="custom-model-style" backdrop="static" >
-        <ModalHeader toggle={this.toggle}><span className="text-center mb-0">Welcome {profile.UserName}, Please fill out some information to complete you're registration</span></ModalHeader>
-          <ModalBody>
+        {(registered) ? 
+
           <Modal isOpen={this.state.nested} toggle={() => this.handleinitial()} backdrop="static" >
-            <ModalHeader>Welcome {profile.UserName}</ModalHeader>
-            <ModalBody>Please fill out some information to complete you're registration</ModalBody>
-            <ModalFooter>
-              <Button color="primary" onClick={() => this.handleinitial()}>Got it!</Button>{' '}
-              {/* <Button color="secondary" onClick={toggleAll}>All Done</Button> */}
-            </ModalFooter>
-          </Modal>
- 
+          <ModalHeader>Welcome {profile.UserName}</ModalHeader>
+          <ModalBody>Please fill out some information to complete you're registration</ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={() => this.handleinitial()}>Got it!</Button>{' '}
+            {/* <Button color="secondary" onClick={toggleAll}>All Done</Button> */}
+          </ModalFooter>
+          </Modal> :<Container className="mt--7" fluid> <Collapse className="mt--7" fluid isOpen={!collapse}><Row className="align-items-center mb-6 mt--7" ><Button className="text-center center" color="primary" type="button" onClick={this.editProfile}> Edit Profile </Button></Row><UserProfile profile={profile} /><Row><h5 className="text center">Current state: {this.status}</h5></Row></Collapse></Container> }
+                  
+                    
+                
+          
+          <Collapse
+            isOpen={collapse}
+            onEntering={() => this.onEntering()}
+            onEntered={() => this.onEntered()}
+            onExiting={() => this.onExiting()}
+            onExited={() => this.onExited()}
+          >
+        <Container className="mt--7" fluid>
         {/* <Container className="mt--7 " fluid style={{marginTop: "-1rem !important"}}> */}
           <Row>
             <Col className="order-xl-1" xl="10">
@@ -378,7 +406,7 @@ class Profile extends React.Component {
                             <Input
                               value={Zipcode===undefined ? profile.Zipcode : Zipcode}
                               id="input-postal-code"
-                              placeholder="Zipcode"
+                              placeholder={77894}
                               type="number"
                               maxLength="9"
                               minLength="5"
@@ -408,22 +436,19 @@ class Profile extends React.Component {
                       </FormGroup>
                     </div>
                     <div className="text-center">
-                      <Button className="mt-4" color="primary" type="submit" disabled={(formErrors.valid === null && MainAddress !== undefined && this.state.valid) ? false : true}>
+                      <Button className="mt-4" color="primary" type="submit" disabled={(formErrors.valid === null ) ? false : true}>
                         Save
                       </Button>
+                      {registered ? null:<Button className="mt-4" color="danger" type="button" onClick={this.editProfile}> Cancel </Button>}                      
                     </div>
                   </Form>
                 </CardBody>
               </Card>
             </Col>
           </Row>
-        {/* </Container> */}
-        </ModalBody>
-        <ModalFooter>
-          {/* <Button color="primary" onClick={this.toggle}>Do Something</Button>{' '}
-          <Button color="secondary" onClick={this.toggle}>Cancel</Button> */}
-        </ModalFooter></Modal>
-        : <Container className="mt--7" fluid><UserProfile profile={profile}/></Container>}
+        </Container>
+        </Collapse>
+        </Container>
       </>
     );
   }
