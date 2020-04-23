@@ -4,10 +4,13 @@ const rateState = {
     loggedIn: null,
     signedUp: null,
     user: undefined,
-    addRequst: undefined,
+    predicted: undefined,
     getRequest: undefined,
-    addRequest_Error: undefined,
-    getProfile: false
+    addError: undefined,
+    getProfile: false,
+    suggested: 0,
+    request: null,
+    due: 0
 }
 
 const rateReducer =(
@@ -31,20 +34,25 @@ const rateReducer =(
             console.log("adding error: ", action.payload.err);
             return {
                 ...state,
-                addRequest_Error: action.payload
+                predicted: action.payload,
+                addError: action.payload.err
             };
 
         case "addRequest":
             console.log("addRequest ", action.payload);
             return{
                 ...state,
-                addRequest: action.payload
+                predicted: action.payload
             }
         case "getRequest":
-            console.log("getRequest ", action.payload);
+            console.log("getRequest ", action.payload, action.request, action.suggested, action.due);
             return{
                 ...state,
-                getRequest: action.payload
+                getRequest: action.payload,
+                predicted: action.payload,
+                request: action.request,
+                suggested: action.suggested.toFixed(2),
+                due: action.due.toFixed(2)
             } 
         default:
             return state;

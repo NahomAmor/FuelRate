@@ -1,8 +1,8 @@
 import React from "react";
 // import { connect } from "react-redux";
 // import { signUp } from "actions/loginActions";
-// import { firestoreConnect } from 'react-redux-firebase'
-// import { compose } from 'redux'
+import { firestoreConnect } from 'react-redux-firebase'
+import { compose } from 'redux'
 // reactstrap components
 import {
   // Button,
@@ -24,7 +24,7 @@ const UserProfile = (props) => {
     // const { profile, registered, getProfile } = props;
     return (
       <>
-        <Col className="order-xl-2 mb-8 mb-xl-3" xl="9" >
+        <Col className="order-xl-2 mt--4 mb-6 mb-xl-3" >
               <Card className="card-profile shadow" style={{minWidth: "700px"}}>
                 <Row className="justify-content-center">
                   <Col className="order-lg-2" lg="3">
@@ -69,7 +69,7 @@ const UserProfile = (props) => {
                           <span className="description">Friends</span> */}
                         </div>
                         <div>
-                          <span className="heading">0</span>
+                          <span className="heading">{props.requests !== null ? props.requests : 0}</span>
                           <span className="description">Quote Requests</span>
                         </div>
                         <div>
@@ -110,11 +110,15 @@ const UserProfile = (props) => {
     );
   }
   const mapStateToProps = (state) => {
+    // console.log( req.find(function(value, index, array){ return value[this.props.firebase.auth.uid]; }))
     return{
-      profile: state.firebase.profile
+      profile: state.firebase.profile,
+      requests: state.firestore.Requests
       // getProfile: true
       // authError: state.authState.authError
     }
   };
 
-export default connect(mapStateToProps, null)(UserProfile);
+export default compose(connect(mapStateToProps, null), firestoreConnect([
+  { collection: 'Requests' }
+]))(UserProfile);

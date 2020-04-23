@@ -1,7 +1,8 @@
 import React from "react";
 import { firestoreConnect } from 'react-redux-firebase';
-import { compose } from 'redux';
+import { compose } from 'redux'; 
 import { addRequestAction } from "actions/addRequestAction";
+import { getRequestAction } from "actions/getRequestAction";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 // reactstrap components
@@ -28,12 +29,16 @@ import {
   FormGroup,
   Form,
   Input,
-  Col
+  Col,
+  FormFeedback, Modal, ModalHeader, ModalBody, ModalFooter
 } from "reactstrap";
 // core components
 import Header from "components/Headers/Header.js";
+import "./styles.css";
+import moment from "moment";
 // import { KeyboardDatePicker } from '@material-ui/pickers';
-
+// var dt = new Date();
+// dt = moment().HTML5_FMT.DATETIME_LOCAL;
 class Requester extends React.Component{
     state = {
       date: new Date(),
@@ -49,7 +54,8 @@ class Requester extends React.Component{
         TotalDue: undefined,
         valid: false
       },
-      valid: false
+      valid: false,
+      toggle: false
 
     }
     onChange = (name, value) => {
@@ -80,6 +86,21 @@ class Requester extends React.Component{
         formErrors,
         valid: ( Gallons !== undefined && date !== undefined)
       });
+      console.log(Gallons, "Valid : ", this.state.valid );
+    }
+    handleinitial = () => {
+      // let formErrors = { ...this.state.formErrors };
+      const { SuggestedPrice, TotalDue } = this.state;
+      const {  due, suggested} = this.props.rateState;
+      let info ={
+        SuggestedPrice: SuggestedPrice===undefined ? suggested : SuggestedPrice,
+        TotalDue: TotalDue===undefined ? due : TotalDue
+      };
+      this.setState({
+        ...info,
+        toggle: false,
+        valid: true
+      });
     }
     handleSubmit = (e) => 
     {
@@ -101,41 +122,72 @@ class Requester extends React.Component{
         this.props.addRequestAction(info);
         // this.setState({
         //   collapse: false,
-
         // }); 
-        return(<Redirect to="/admin/requestsForm" />)
+        return(<Redirect to="/admin/index" />);
       }
     }
     handleGetPrice= (e) => 
     {
+      const { date, Gallons, Address, formErrors,  } = this.state
+      e.preventDefault();
+      let info ={
+        date: date===undefined ? moment(this.state.date).format("YYYY-MM-DDTHH:mm") : date,
+        Gallons: Gallons===undefined ? 100 : Gallons,
+        Address: Address===undefined ? this.props.profile.State : Address
+
+      }
+      console.log(info);
+      this.setState({
+        ...info,
+        toggle: true
+      });
+      if(formErrors.valid === null){
+        this.props.getRequestAction(info);
+        this.props.history.push('/admin');
+        // <Redirect to=t/>
+      
+      }
+      
+
 
     }
     handleDateChange = date => {
       this.setState({date});
     };
   render() {
-    const { profile } = this.props;
-    console.log("Request form info", this.state, this.props)
+    const { profile, predicted, rateState } = this.props;
+    const {  due, suggested} = this.props.rateState;
+    if (predicted && !due){
+      this.props.history.push('/admin/requestsForm');
+    }
+    // const { suggest, due }= this.props.rateState;
+    console.log("Request form info", this.state, this.props);
     return (
       <>
         <Header />
         {/* Page content */}
         <Container className="mt--7" fluid>
           {/* Table */}
+        
+          <Modal isOpen={this.state.toggle} toggle={() => this.handleinitial()} backdrop="static" >
+          <ModalHeader>Thank You {profile.UserName}</ModalHeader>
+          <ModalBody>Let us know if you agree with the Pricing Methods ....</ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={() => this.handleinitial()}>Got it!</Button>{' '}
+            {/* <Button color="secondary" onClick={toggleAll}>All Done</Button> */}
+          </ModalFooter>
+          </Modal>
           <Row>
             <div className="col">
               <Card className="shadow">
-                <CardHeader className="border-0">
-                  <h3 className="mb-0 text-center"> Quote Request Form </h3>
+                <CardHeader className="border-0 text-center mb--2" mt="2">
+                  <h2 className="my-4 text-center"> Quote Request Form </h2>
                 </CardHeader>
-                <CardBody className="px-lg-5 py-lg-5">
-                  <div className="text-center text-muted text-red mb-4">
-                  <small>* required</small>
-                  </div>
-                  <Form>
-                    <h6 className="heading-small text-muted mb-4">
-                      Fuel Quote Form
-                    </h6>
+                <CardBody className="px-lg-5 py-lg-5">                  
+                  <Form onSubmit={this.handleSubmit} role="form">
+                    <hr className="my-4" />
+                    {/* Description */}
+                    <h6 className="heading-small text-muted mb-4">Fuel Quote Form</h6>
                     <div className="pl-lg-4">
                       <Row>
                         <Col lg="6">
@@ -144,17 +196,49 @@ class Requester extends React.Component{
                               className="form-control-label"
                               htmlFor="input-username"
                             >
-                              Gallons Requested
+                              Gallons Requested {this.state.formErrors.Gallons !== null && !this.state.Gallons ?  <small className="text-center text-muted text-red ">* required</small>: undefined}
                             </label>
                             <Input
                               className="form-control-alternative"
-                              defaultValue={100}
+                              defaultValue={rateState.request !== null ? rateState.request.Gallons : 100}
                               id="input-amount"
                               placeholder={100}
                               type="number"
+                              invalid={this.state.formErrors.Gallons !== null && !this.state.Gallons ? true : undefined}
                               required
                               label="Required"
+                              style={this.state.formErrors.Gallons !== null && !this.state.Gallons ? ({borderBottom:"1mm solid #FB200A", borderRadius: "0.175rem", backgroundColor:"#FFFFFF", boxShadow: "0px 0px 1px 1px #FB200A" }): null}
+                              onChange= {e=>{this.onChange("Gallons", e.target.value);}}
+                              onMouseEnter= {e=>{this.onChange("Gallons", e.target.value);}}
+                              onLoad={e =>{ console.log(" Address loaded data capture", e);}}
                             />
+                            <FormFeedback invalid ></FormFeedback>
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md="12">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-date"
+                            >
+                              Delivery Date {this.state.formErrors.date !== null && !this.state.date ?  <small className="text-center text-muted text-red ">* required</small>: undefined}
+                            </label>
+                            <Input
+                              className="form-control-alternative"
+                              defaultValue={rateState.request !== null ? rateState.request.date : moment(this.state.date).format("YYYY-MM-DDTHH:mm")}
+                              id="input-date"
+                              placeholder="YYYY-MM-DDTHH:mm"
+                              type="datetime-local"
+                              invalid={this.state.formErrors.date !== null && !this.state.date ? true : undefined}
+                              required
+                              style={this.state.formErrors.date !== null && !this.state.date ? ({borderBottom:"1mm solid #FB200A", borderRadius: "0.175rem", backgroundColor:"#FFFFFF", boxShadow: "0px 0px 1px 1px #FB200A" }): null}
+                              label="Required"
+                              onChange= {e=>{this.onChange("date", e.target.value);}}
+                              onMouseEnter={e=>{this.onChange("date", e.target.value);}}
+                            />
+                            <FormFeedback invalid></FormFeedback>
                           </FormGroup>
                         </Col>
                       </Row>
@@ -169,37 +253,27 @@ class Requester extends React.Component{
                             </label>
                             <Input
                               className="form-control-alternative"
-                              defaultValue={profile.MainAddress}
+                              defaultValue={profile.MainAddress+' '+profile.City+' '+profile.State+' '+profile.Zipcode}
                               id="input-address"
                               placeholder="Delivery Address"
                               disabled
+                              onBeforeInput= {e =>{ console.log(" Address loaded data capture", e);}}
+                              onLoad={e =>{ console.log(" Address loaded data capture", e);}}
                               type="text"
+                              onMouseEnter={e=>{this.onChange("Address", this.props.profile.MainAddress);}}
                             />
                           </FormGroup>
                         </Col>
                       </Row>
-                      <Row>
-                        <Col md="12">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-date"
-                            >
-                              Delivery Date
-                            </label>
-                            <Input
-                              className="form-control-alternative"
-                              defaultValue={this.state.date}
-                              id="input-date"
-                              placeholder="MM/DD/YYYY"
-                              type="date"
-                              required
-                              label="Required"
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                      
+                      <Row  className="text-center" style={{content: "text-center"}}>
+                        <Col  className="text-center" style={{content: "text-center"}}>
+                      <Button className="mt-4 " color="default" type="button" disabled={this.state.valid ? undefined : true} onClick={this.handleGetPrice} >
+                        Get Price
+                      </Button></Col></Row>
+                      <hr className="my-4" />
+                    {/* Description */}
+                    <h6 className="heading-small text-muted mb-4">Pricing Module</h6>
+                    {/* <div className="pl-lg-4"></div> */}
                       <Row>
                         <Col lg="6">
                           <FormGroup>
@@ -212,12 +286,14 @@ class Requester extends React.Component{
                             <Input
                               disabled
                               className="form-control-alternative"
-                              defaultValue={'$'+ 2000}
+                              defaultValue={suggested ? suggested :"$ "+2000}
                               id="input-currency"
                               placeholder= {2000}
                               type="currency"
                               required
                               label="Required"
+                              onBeforeInput= {e =>{ console.log(" Address loaded data capture", e);}}
+                              onLoad={e =>{ console.log(" Address loaded data capture", e);}}
                             />
                           </FormGroup>
                         </Col>
@@ -234,21 +310,21 @@ class Requester extends React.Component{
                             <Input
                               disabled
                               className="form-control-alternative"
-                              defaultValue={'$'+ 1000}
+                              defaultValue={due ? due : "$ "+2000}
                               id="input-currency"
                               placeholder={1000}
                               type="currency"
                               required
                               label="Required"
+                              onBeforeInput= {e =>{ console.log(" Address loaded data capture", e);}}
+                              onLoad={e =>{ console.log(" Address loaded data capture", e);}}
                             />
                           </FormGroup>
                         </Col>
                       </Row>
-                      <Row>
-                        <Col>
-                        <Button className="mt-4" color="primary" type="submit" >
-                        Submit
-                      </Button>
+                      <Row className="text-center" style={{content: "text-center"}} >
+                        <Col className="text-center" style={{content: "text-center"}} >
+                        {predicted ? <Button className="mt-4" color="default" type="submit" >Submit</Button>: undefined}
                         </Col>
                       </Row>
                     </div>
@@ -315,7 +391,7 @@ class Requester extends React.Component{
             <div className="col">
               <Card className="bg-default shadow">
                 <CardHeader className="bg-transparent border-0">
-                  <h3 className="text-white mb-0">Card tables</h3>
+                  <h3 className="text-white mb-0">Request History</h3>
                 </CardHeader>
                 <Table
                   className="align-items-center table-dark table-flush"
@@ -323,7 +399,7 @@ class Requester extends React.Component{
                 >
                   <thead className="thead-dark">
                     <tr>
-                      <th scope="col">Project</th>
+                      <th scope="col">Gallons</th>
                       <th scope="col">Budget</th>
                       <th scope="col">Status</th>
                       <th scope="col">Users</th>
@@ -347,7 +423,7 @@ class Requester extends React.Component{
                           </a>
                           <Media>
                             <span className="mb-0 text-sm">
-                              Argon Design System
+                              1700 G
                             </span>
                           </Media>
                         </Media>
@@ -377,7 +453,7 @@ class Requester extends React.Component{
                             delay={0}
                             target="tooltip731399078"
                           >
-                            Ryan Tompson
+                            2,652 G
                           </UncontrolledTooltip>
                           <a
                             className="avatar avatar-sm"
@@ -395,7 +471,7 @@ class Requester extends React.Component{
                             delay={0}
                             target="tooltip491083084"
                           >
-                            Romina Hadid
+                            1,252 G
                           </UncontrolledTooltip>
                           <a
                             className="avatar avatar-sm"
@@ -413,9 +489,9 @@ class Requester extends React.Component{
                             delay={0}
                             target="tooltip528540780"
                           >
-                            Alexander Smith
+                            952 G
                           </UncontrolledTooltip>
-                          <a
+                          {/* <a
                             className="avatar avatar-sm"
                             href="#pablo"
                             id="tooltip237898869"
@@ -432,7 +508,7 @@ class Requester extends React.Component{
                             target="tooltip237898869"
                           >
                             Jessica Doe
-                          </UncontrolledTooltip>
+                          </UncontrolledTooltip> */}
                         </div>
                       </td>
                       <td>
@@ -464,19 +540,19 @@ class Requester extends React.Component{
                               href="#pablo"
                               onClick={e => e.preventDefault()}
                             >
-                              Action
+                              Revisit
                             </DropdownItem>
                             <DropdownItem
                               href="#pablo"
                               onClick={e => e.preventDefault()}
                             >
-                              Another action
+                              Delete
                             </DropdownItem>
                             <DropdownItem
                               href="#pablo"
                               onClick={e => e.preventDefault()}
                             >
-                              Something else here
+                              Something Else
                             </DropdownItem>
                           </DropdownMenu>
                         </UncontrolledDropdown>
@@ -497,7 +573,7 @@ class Requester extends React.Component{
                           </a>
                           <Media>
                             <span className="mb-0 text-sm">
-                              Angular Now UI Kit PRO
+                                1,252 G
                             </span>
                           </Media>
                         </Media>
@@ -511,7 +587,7 @@ class Requester extends React.Component{
                       </td>
                       <td>
                         <div className="avatar-group">
-                          <a
+                          {/* <a
                             className="avatar avatar-sm"
                             href="#pablo"
                             id="tooltip188614932"
@@ -527,7 +603,7 @@ class Requester extends React.Component{
                             delay={0}
                             target="tooltip188614932"
                           >
-                            Ryan Tompson
+                            
                           </UncontrolledTooltip>
                           <a
                             className="avatar avatar-sm"
@@ -582,7 +658,7 @@ class Requester extends React.Component{
                             target="tooltip904098289"
                           >
                             Jessica Doe
-                          </UncontrolledTooltip>
+                          </UncontrolledTooltip> */}
                         </div>
                       </td>
                       <td>
@@ -647,7 +723,7 @@ class Requester extends React.Component{
                           </a>
                           <Media>
                             <span className="mb-0 text-sm">
-                              Black Dashboard
+                                1,052 G
                             </span>
                           </Media>
                         </Media>
@@ -679,7 +755,7 @@ class Requester extends React.Component{
                           >
                             Ryan Tompson
                           </UncontrolledTooltip>
-                          <a
+                          {/* <a
                             className="avatar avatar-sm"
                             href="#pablo"
                             id="tooltip353988222"
@@ -732,7 +808,7 @@ class Requester extends React.Component{
                             target="tooltip362118155"
                           >
                             Jessica Doe
-                          </UncontrolledTooltip>
+                          </UncontrolledTooltip> */}
                         </div>
                       </td>
                       <td>
@@ -829,7 +905,7 @@ class Requester extends React.Component{
                           >
                             Ryan Tompson
                           </UncontrolledTooltip>
-                          <a
+                          {/* <a
                             className="avatar avatar-sm"
                             href="#pablo"
                             id="tooltip711961370"
@@ -882,7 +958,7 @@ class Requester extends React.Component{
                             target="tooltip638048561"
                           >
                             Jessica Doe
-                          </UncontrolledTooltip>
+                          </UncontrolledTooltip> */}
                         </div>
                       </td>
                       <td>
@@ -947,7 +1023,7 @@ class Requester extends React.Component{
                           </a>
                           <Media>
                             <span className="mb-0 text-sm">
-                              Vue Paper UI Kit PRO
+                                2,658 G
                             </span>
                           </Media>
                         </Media>
@@ -979,7 +1055,7 @@ class Requester extends React.Component{
                           >
                             Ryan Tompson
                           </UncontrolledTooltip>
-                          <a
+                          {/* <a
                             className="avatar avatar-sm"
                             href="#pablo"
                             id="tooltip840372212"
@@ -1032,7 +1108,7 @@ class Requester extends React.Component{
                             target="tooltip951447946"
                           >
                             Jessica Doe
-                          </UncontrolledTooltip>
+                          </UncontrolledTooltip> */}
                         </div>
                       </td>
                       <td>
@@ -1097,13 +1173,16 @@ const mapStateToProps = (state) => {
   return{
     ...state,
     profile: state.firebase.profile,
-    Requests: state.firebase
+    Requests: state.firebase,
+    predicted: state.rateState.predicted,
+    rateState: state.rateState
   }
 };
 
 const mapDispatchToProps = (dispatch) => {
   return{
-    addRequestAction: (info) => dispatch( addRequestAction(info))
+    addRequestAction: (info) => dispatch( addRequestAction(info)),
+    getRequestAction: (info) => dispatch( getRequestAction(info))
   }
 };
 export default compose(connect(mapStateToProps, mapDispatchToProps), firestoreConnect([
