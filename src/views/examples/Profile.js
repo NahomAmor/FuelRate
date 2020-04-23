@@ -4,11 +4,7 @@ import { connect } from "react-redux";
 import { firestoreConnect } from 'react-redux-firebase'
 import { updateProfile } from "actions/getProfiles";
 import { compose } from 'redux'
-import json from "./states"
 // reactstrap components
-
-
-
 import {
   Button,
   Card,
@@ -29,7 +25,6 @@ import UserHeader from "components/Headers/UserHeader.js";
 import UserProfile from "components/Headers/UserProfile";
 import "./styles.css";
 import { Redirect } from "react-router-dom";
-
 const emailRegex = RegExp(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 class Profile extends React.Component {
   // componentDidMount() {
@@ -63,15 +58,7 @@ class Profile extends React.Component {
     valid: false,
     status: "Closed"
   }
-  createStates = json => {
-    let items = []
-    return json.map((prop, key) => {
-      items.push(<option key={key} value={prop.abbreviation}>{prop.name}</option>);
-        
-        return items;
-          
-      }) 
-    };
+
   onChange = (name, value) => {
     let formErrors = { ...this.state.formErrors };
     const {  Email, State, Zipcode, FullName,  MainAddress, City } = this.state;
@@ -174,7 +161,8 @@ class Profile extends React.Component {
       return(<Redirect to="/admin/requestsForm" />)
     }
   }
- 
+
+
   render() {
     const { profile, registered } = this.props;
     const { FullName, UserName, Email, State, City, MainAddress, Address2, Zipcode, AboutMe, formErrors, collapse } = this.state;
@@ -193,7 +181,7 @@ class Profile extends React.Component {
             <Button color="primary" onClick={() => this.handleinitial()}>Got it!</Button>{' '}
             {/* <Button color="secondary" onClick={toggleAll}>All Done</Button> */}
           </ModalFooter>
-          </Modal> :<Container className="mt--7" fluid> <Collapse className="mt--7" isOpen={!collapse}><Row className="text-center mb-6 mt--7" ><Col className="text-center mt--7"><Button className="text-center" color="primary" type="button" onClick={this.editProfile}> Edit Profile </Button></Col></Row><Row className="text-center" ><Col className="text-center" ><UserProfile profile={profile} /></Col></Row><Row className="text center mt-4"><Col className="text center"></Col></Row></Collapse></Container> }
+          </Modal> :<Container className="mt--7" fluid> <Collapse className="mt--7" fluid isOpen={!collapse}><Row className="align-items-center mb-6 mt--7" ><Button className="text-center center" color="primary" type="button" onClick={this.editProfile}> Edit Profile </Button></Row><UserProfile profile={profile} /><Row><h5 className="text center">Current state: {this.status}</h5></Row></Collapse></Container> }
                   
                     
                 
@@ -208,7 +196,7 @@ class Profile extends React.Component {
         <Container className="mt--7" fluid>
         {/* <Container className="mt--7 " fluid style={{marginTop: "-1rem !important"}}> */}
           <Row>
-            <Col className="order-xl-1 mt--7 mb-7" >
+            <Col className="order-xl-1" xl="10">
               <Card className=" shadow">
                 <CardHeader className="border-0">
                   <Row className="align-items-center">
@@ -251,7 +239,7 @@ class Profile extends React.Component {
                               label="Required"
                               maxLength="50"
                               // valid={formErrors.UserName === null ? true : undefined}
-                              invalid={(formErrors.UserName !== null) ? "true" : undefined}
+                              invalid={(formErrors.UserName !== null) ? true : undefined}
                               onChange={ e=>this.onChange("UserName", e.target.value)}
                             />
                             <FormFeedback className="text-center m-2"><span >{formErrors.UserName}</span><br/></FormFeedback>
@@ -272,7 +260,7 @@ class Profile extends React.Component {
                               type="email"
                               required
                               label="Required"
-                              invalid={formErrors.Email !== null ? "true" : undefined}
+                              invalid={formErrors.Email !== null ? true : undefined}
                               onChange={ e=>this.onChange("Email", (Email===undefined ? profile.Email : e.target.value ))}
                             />
                             <FormFeedback className="text-center m-2"><span >{formErrors.Email}</span><br/></FormFeedback>
@@ -297,7 +285,7 @@ class Profile extends React.Component {
                               required
                               label="Required"
                               maxLength="50"
-                              invalid={formErrors.FullName !== null ? "true" : undefined}
+                              invalid={formErrors.FullName !== null ? true : undefined}
                               onChange={ e=>this.onChange("FullName", e.target.value)}
                             />
                             <FormFeedback valid />
@@ -359,7 +347,7 @@ class Profile extends React.Component {
                               maxLength="100"
                               onChange={ e=>this.onChange("Address2", e.target.value)}
                             />
-                            <FormFeedback className="text-center m-2" invalid ><span >{formErrors.Address2}</span><br/></FormFeedback>
+                            <FormFeedback invalid className="text-center m-2"><span >{formErrors.Address2}</span><br/></FormFeedback>
                           </FormGroup>
                         </Col>
                       </Row>
@@ -381,7 +369,7 @@ class Profile extends React.Component {
                               label="Required"
                               maxLength="100"
                               // valid={formErrors.City === null ? true : undefined}
-                              invalid={formErrors.City !== null ? "true" : undefined}
+                              invalid={formErrors.City !== null ? true : undefined}
                               onChange={ e=>this.onChange("City", e.target.value)}
                             />
                             <FormFeedback invalid className="text-center m-2"><span >{formErrors.City}</span><br/></FormFeedback>
@@ -399,14 +387,11 @@ class Profile extends React.Component {
                               value={State===undefined ? profile.State : State}
                               id="input-state"
                               placeholder="State"
-                              name="select"
-                              type="select"
+                              type="text"
                               maxLength="2"
-                              invalid={formErrors.State !== null ? "true" : undefined}
+                              invalid={formErrors.State !== null ? true : undefined}
                               onChange={ e=>this.onChange("State", e.target.value)}
-                            >
-                              {this.createStates(json)}
-                            </Input>
+                            />
                             <FormFeedback invalid className="text-center m-2"><span >{formErrors.State}</span><br/></FormFeedback>
                           </FormGroup>
                         </Col>
@@ -426,7 +411,7 @@ class Profile extends React.Component {
                               maxLength="9"
                               minLength="5"
                               // valid={formErrors.Zipcode === null ? true : false}
-                              invalid={formErrors.Zipcode !== null ? "true" : undefined}
+                              invalid={formErrors.Zipcode !== null ? true : undefined}
                               onChange={ e=>this.onChange("Zipcode", e.target.value)}
                             />
                             <FormFeedback invalid className="text-center m-2"><span >{formErrors.Zipcode}</span><br/></FormFeedback>

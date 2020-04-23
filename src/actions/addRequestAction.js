@@ -14,8 +14,7 @@ export const addRequestAction = ( request ) => {
         }).then(() => {
             dispatch({
                 type: "addRequest",
-                payload: true,
-                request
+                payload: true
             });
 
         }).catch((err) => {

@@ -12,11 +12,11 @@ import { logOut } from "actions/loginActions";
 import routes from "routes.js";
 
 class Auth extends React.Component {
-  UNSAFE_componentDidMount() {
+  componentDidMount() {
     document.body.classList.add("bg-default");
     // console.log('component mounted')
   }
-  UNSAFE_componentWillUnmount() {
+  componentWillUnmount() {
     document.body.classList.remove("bg-default");
   }
   getRoutes = routes => {
