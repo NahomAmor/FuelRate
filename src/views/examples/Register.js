@@ -12,16 +12,14 @@ import {
   FormGroup,
   Form,
   Input,
+  FormFeedback,
   InputGroupAddon,
   InputGroupText,
   InputGroup,
   Row,
   Col
 } from "reactstrap";
-const emailRegex = RegExp(
-  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-);
-
+const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 class Register extends React.Component {
   state= {
     username: "",
@@ -33,6 +31,7 @@ class Register extends React.Component {
       email: null,
       password: null,
       agree: null,
+      pstate: null,
       valid: null
     }
   }
@@ -49,7 +48,7 @@ class Register extends React.Component {
         formErrors.email = event.target.value.length === 0 ? "* Required" : (emailRegex.test(event.target.value) ? null : "invalid email address");
         break;
       case "password":
-        formErrors.password = event.target.value.length < 6 ? "minimum 6 characaters required" : null;
+        formErrors.password = (event.target.value !== null && event.target.value.length <  6) ? "minimum 6 characaters required": null;
         break;
       case "agree":
         formErrors.agree = event.target.checked ? null : "Agreement Policy Must be Checked";
@@ -134,16 +133,19 @@ class Register extends React.Component {
               </div>
               <Form onSubmit={this.handleSubmit} role="form">
                 <FormGroup>
-                  <InputGroup className="input-group-alternative mb-3">
+                  <InputGroup className="input-group-alternative">
                     <InputGroupAddon addonType="prepend">
                       <InputGroupText>
                         <i className="ni ni-hat-3" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Username" type="text" onChange={ e=>this.onChange("username", e)} />
+                    <Input placeholder="Username" type="text" onChange={ e=>this.onChange("username", e)} invalid={username !== null && formErrors.username !== null ? true : undefined} style={username !== null && formErrors.username !== null ? ({borderBottom:"1mm solid #fb6340", borderRadius: "0.175rem", backgroundColor:"#FFFFFFF", textIndent: "6px", boxShadow: "0 2px 5px rgba(251, 99, 64, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)"}) : (username !== null && username !== "" && formErrors.username === null ? ({borderBottom:"1mm solid rgb(45, 206, 137)", borderRadius: "0.175rem", textIndent: "6px", boxShadow: "0 1px 3px rgba(45, 206, 137, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)"}): null)}/>
+                    
+                    <FormFeedback invalid={username !== null && formErrors.username !== null ? 'true'.toString(): undefined} className="text-center m-2"><span >{formErrors.username}</span><br/></FormFeedback>
                   </InputGroup>
+
                 </FormGroup>
-                {username != null && formErrors.username != null ? (<span className="errorMessage">{formErrors.username}</span>) : null}
+                {/* {username != null && formErrors.username != null ? (<span className="errorMessage">{formErrors.username}</span>) : null} */}
                 <FormGroup>
                   <InputGroup className="input-group-alternative mb-3">
                     <InputGroupAddon addonType="prepend">
@@ -151,10 +153,11 @@ class Register extends React.Component {
                         <i className="ni ni-email-83" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Email" type="email" autoComplete="new-email" onChange={ e=>this.onChange("email", e)} />
+                    <Input placeholder="Email" type="email" onChange={ e=>this.onChange("email", e)} invalid={formErrors.email !== null ? true : undefined}  style={email !== null && formErrors.email !== null ? ({borderBottom:"1mm solid #fb6340", borderRadius: "0.175rem", backgroundColor:"#FFFFFFF", textIndent: "6px", boxShadow: "0 2px 5px rgba(251, 99, 64, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)"}) : (email !== null && email !== "" && formErrors.email === null ? ({borderBottom:"1mm solid rgb(45, 206, 137)", borderRadius: "0.175rem", textIndent: "6px", boxShadow: "0 1px 3px rgba(45, 206, 137, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)"}): null)}/>
+                    <FormFeedback invalid={formErrors.email !== null ? "anything": undefined} className="text-center m-2" ><span >{formErrors.email}</span><br/></FormFeedback>
                   </InputGroup>
                 </FormGroup>
-                {email != null && formErrors.email != null ? (<span className="errorMessage">{formErrors.email}</span>) : null}
+                {/* {email != null && formErrors.email != null ? (<span className="errorMessage">{formErrors.email}</span>) : null} */}
                 <FormGroup>
                   <InputGroup className="input-group-alternative">
                     <InputGroupAddon addonType="prepend">
@@ -162,15 +165,16 @@ class Register extends React.Component {
                         <i className="ni ni-lock-circle-open" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Password" type="password" autoComplete="new-password" onChange={ e=>this.onChange("password", e)}/>
+                    <Input placeholder="Password" type="password" onChange={ e=>this.onChange("password", e)} invalid={formErrors.password !== null ? true: undefined} style={password !== null && formErrors.password !== null ? ({borderBottom:"1mm solid #fb6340", borderRadius: "0.175rem", backgroundColor:"#FFFFFFF", textIndent: "6px", boxShadow: "0 2px 5px rgba(251, 99, 64, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)"}) : (password !== null && password !== "" && formErrors.password === null ? ({borderBottom:"1mm solid rgb(45, 206, 137)", borderRadius: "0.175rem", textIndent: "6px", boxShadow: "0 1px 3px rgba(45, 206, 137, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)"}): null)}/>
+                    <FormFeedback invalid={formErrors.password !== null ? "anything": undefined} className="text-center m-2"><span >{formErrors.password}</span><br/></FormFeedback>
                   </InputGroup>
                 </FormGroup>
-                {password != null && formErrors.password != null ? (<span className="errorMessage">{formErrors.password}</span>) : null}
-                {console.log(this.state.password.length)}
+                {/* {password != null && formErrors.password != null ? (<span className="errorMessage">{formErrors.password}</span>) : null} */}
+                {/* {console.log(this.state.password.length)} */}
                 {
                 (this.state.password.length === 0) ? (<span></span>): (<div className="text-muted font-italic">
                   <small>
-                    password strength:  {((this.state.password.length > 4) ? ((this.state.password.length > 6) ? ((this.state.password.includes("1") || this.state.password.includes("2")|| this.state.password.includes("3")|| this.state.password.includes("4")|| this.state.password.includes("5")|| this.state.password.includes("6")|| this.state.password.includes("7")|| this.state.password.includes("8")|| this.state.password.includes("9")|| this.state.password.includes("0")) ? (<span className="text-success font-weight-700">strong</span>) : (<span className="text-primary font-weight-700">good</span>+(<br/>)+(<span>-At least one Number</span>))) : (<span className="text-warning font-weight-700">weak</span>)+(<br/>)+(<span>-At least one Number</span>)+(<br/>)+(<span>-At least 6 Characters</span>)) : ((<span className="text-danger font-weight-700">bad</span>)+(<br/>)+(<span>-At least one Uppercase letter</span>)+(<br/>)+(<span>-At least one Number</span>)+(<br/>)+(<span>-At least 6 Characters</span>)))}
+                password strength: {this.state.password.length <= 5 ? <span><span className="text-danger font-weight-700">bad </span><br/> <span>{this.state.password.includes("1") || this.state.password.includes("2")|| this.state.password.includes("3")|| this.state.password.includes("4")|| this.state.password.includes("5")|| this.state.password.includes("6")|| this.state.password.includes("7")|| this.state.password.includes("8")|| this.state.password.includes("9")|| this.state.password.includes("0") ?  <span><span className="text-muted font-italic ml-7 mt-2" > - At least 6 Characters </span></span> : <span><span className="text-muted font-italic ml-7 mt-2" > - At least 6 Characters <br/></span><span className="text-muted font-italic ml-7 mt-2" > - At least 1 Number </span></span>}</span></span> : <span>{this.state.password.length >= 6 ?  <span>{this.state.password.includes("1") || this.state.password.includes("2")|| this.state.password.includes("3")|| this.state.password.includes("4")|| this.state.password.includes("5")|| this.state.password.includes("6")|| this.state.password.includes("7")|| this.state.password.includes("8")|| this.state.password.includes("9")|| this.state.password.includes("0") ?  <span className="text-success font-weight-700">strong</span> : <span><span className="text-primary font-weight-700">Okay</span><br/><span className="text-muted font-italic ml-7 mt-2" > -At least one Number</span></span>}</span> : <span>{this.state.password.includes("1") || this.state.password.includes("2")|| this.state.password.includes("3")|| this.state.password.includes("4")|| this.state.password.includes("5")|| this.state.password.includes("6")|| this.state.password.includes("7")|| this.state.password.includes("8")|| this.state.password.includes("9")|| this.state.password.includes("0") ?  <span><span className="text-primary font-weight-700">fair </span><br/><span className="text-muted font-italic ml-7 mt-2" > - At least 6 Characters </span></span> : undefined}</span>}</span> } 
                   </small>
                 </div>)}
                 <Row className="my-4">
@@ -194,7 +198,7 @@ class Register extends React.Component {
                         </span>
                       </label>
                     </div>
-                    {agree != null && formErrors.agree != null ? (<span className="errorMessage">{formErrors.agree}</span>) : null}
+                    {agree != null && formErrors.agree != null ? (<span className="text-center errorMessage"><small className="text-center text-muted text-red ">* required <br/>  {formErrors.agree}</small></span>) : null}
                   </Col>
                 </Row>
                 <div className="text-center">

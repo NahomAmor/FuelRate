@@ -230,8 +230,8 @@ class Login extends React.Component {
                   <Button className="my-4" color="primary" type="submit" disabled={(this.validateForm() ? false : true)}>
                     Sign in
                   </Button>
-                  <div className="red-text center">
-                    { authError ? <p>{authError}</p> : null}
+                  <div className="red-text text-center">
+                    { authError ? <small className="text-center text-muted text-red ">*{authError}</small>: null}
                   </div>
                 </div>
               </Form>

@@ -5,6 +5,7 @@ import { firestoreConnect } from 'react-redux-firebase'
 import { updateProfile } from "actions/getProfiles";
 import { compose } from 'redux'
 import json from "./states"
+import Select from 'react-select'
 // reactstrap components
 
 
@@ -29,7 +30,67 @@ import UserHeader from "components/Headers/UserHeader.js";
 import UserProfile from "components/Headers/UserProfile";
 import "./styles.css";
 import { Redirect } from "react-router-dom";
-
+const stateOptions = [
+  { value: 'AL', label: 'Alabama' },
+  { value: 'AK', label: 'Alaska' },
+  { value: 'AS', label: 'American Samoa' },
+  { value: 'AZ', label: 'Arizona' },
+  { value: 'AR', label: 'Arkansas' },
+  { value: 'CA', label: 'California' },
+  { value: 'CO', label: 'Colorado' },
+  { value: 'CT', label: 'Connecticut' },
+  { value: 'DE', label: 'Delaware' },
+  { value: 'DC', label: 'District Of Columbia' },
+  { value: 'FM', label: 'Federated States Of Micronesia' },
+  { value: 'FL', label: 'Florida' },
+  { value: 'GA', label: 'Georgia' },
+  { value: 'GU', label: 'Guam' },
+  { value: 'HI', label: 'Hawaii' },
+  { value: 'ID', label: 'Idaho' },
+  { value: 'IL', label: 'Illinois' },
+  { value: 'IN', label: 'Indiana' },
+  { value: 'IA', label: 'Iowa' },
+  { value: 'KS', label: 'Kansas' },
+  { value: 'KY', label: 'Kentucky' },
+  { value: 'LA', label: 'Louisiana' },
+  { value: 'ME', label: 'Maine' },
+  { value: 'MH', label: 'Marshall Islands' },
+  { value: 'MD', label: 'Maryland' },
+  { value: 'MA', label: 'Massachusetts' },
+  { value: 'MI', label: 'Michigan' },
+  { value: 'MN', label: 'Minnesota' },
+  { value: 'MS', label: 'Mississippi' },
+  { value: 'MO', label: 'Missouri' },
+  { value: 'MT', label: 'Montana' },
+  { value: 'NE', label: 'Nebraska' },
+  { value: 'NV', label: 'Nevada' },
+  { value: 'NH', label: 'New Hampshire' },
+  { value: 'NJ', label: 'New Jersey' },
+  { value: 'NM', label: 'New Mexico' },
+  { value: 'NY', label: 'New York' },
+  { value: 'NC', label: 'North Carolina' },
+  { value: 'ND', label: 'North Dakota' },
+  { value: 'MP', label: 'Northern Mariana Islands' },
+  { value: 'OH', label: 'Ohio' },
+  { value: 'OK', label: 'Oklahoma' },
+  { value: 'OR', label: 'Oregon' },
+  { value: 'PW', label: 'Palau' },
+  { value: 'PA', label: 'Pennsylvania' },
+  { value: 'PR', label: 'Puerto Rico' },
+  { value: 'RI', label: 'Rhode Island' },
+  { value: 'SC', label: 'South Carolina' },
+  { value: 'SD', label: 'South Dakota' },
+  { value: 'TN', label: 'Tennessee' },
+  { value: 'TX', label: 'Texas' },
+  { value: 'UT', label: 'Utah' },
+  { value: 'VT', label: 'Vermont' },
+  { value: 'VI', label: 'Virgin Islands' },
+  { value: 'VA', label: 'Virginia' },
+  { value: 'WA', label: 'Washington' },
+  { value: 'WV', label: 'West Virginia' },
+  { value: 'WI', label: 'Wisconsin' },
+  { value: 'WY', label: 'Wyoming' },
+];
 const emailRegex = RegExp(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 class Profile extends React.Component {
   // componentDidMount() {
@@ -46,6 +107,7 @@ class Profile extends React.Component {
     Address2: undefined, 
     UserName: undefined,
     AboutMe: undefined,
+    selectedOption: null,
     formErrors: {
       FullName: null,
       UserName: null,
@@ -72,6 +134,11 @@ class Profile extends React.Component {
           
       }) 
     };
+    filterColors = (inputValue) => {
+      return json.filter(i =>
+        i.name.toLowerCase().includes(inputValue.toLowerCase())
+      );
+    };
   onChange = (name, value) => {
     let formErrors = { ...this.state.formErrors };
     const {  Email, State, Zipcode, FullName,  MainAddress, City } = this.state;
@@ -86,7 +153,7 @@ class Profile extends React.Component {
         formErrors.FullName = value.length === 0 ? "* Required" : null;
         break;
       case "State":
-        formErrors.State = value.length === 0 ? "* Required" : null;
+        console.log("State: ", value);
         break;
       case "City":
         formErrors.City = value.length === 0 ? "* Required" : null;
@@ -124,6 +191,8 @@ class Profile extends React.Component {
       AboutMe: AboutMe,
       nested: false,
       formErrors: {
+        UserName: null,
+        Email: null,
         FullName: "* Required",
         State: "* Required",
         City: "* Required",
@@ -154,7 +223,7 @@ class Profile extends React.Component {
     let info ={
       FullName: FullName===undefined ? profile.FullName : FullName,
       Email: Email===undefined ? profile.Email : Email,
-      State: State===undefined ? profile.State : State,
+      State: State===undefined ? profile.State : State.value,
       City: City===undefined ? profile.City : City,
       Zipcode: Zipcode===undefined ? profile.Zipcode : Zipcode,
       MainAddress: MainAddress===undefined ? profile.MainAddress : MainAddress,
@@ -174,10 +243,17 @@ class Profile extends React.Component {
       return(<Redirect to="/admin/requestsForm" />)
     }
   }
+  handleSelect = selectedOption => {
+    this.setState(
+      { selectedOption },
+      () => console.log(`Option selected:`, this.state.selectedOption)
+    );
+  };
  
   render() {
     const { profile, registered } = this.props;
     const { FullName, UserName, Email, State, City, MainAddress, Address2, Zipcode, AboutMe, formErrors, collapse } = this.state;
+    console.log("show state: ", State);
     return (
       <>
         <UserHeader profile={profile} />
@@ -251,10 +327,10 @@ class Profile extends React.Component {
                               label="Required"
                               maxLength="50"
                               // valid={formErrors.UserName === null ? true : undefined}
-                              invalid={(formErrors.UserName !== null) ? "true" : undefined}
+                              invalid={(formErrors.UserName !== null) ? true : undefined}
                               onChange={ e=>this.onChange("UserName", e.target.value)}
                             />
-                            <FormFeedback className="text-center m-2"><span >{formErrors.UserName}</span><br/></FormFeedback>
+                            <FormFeedback invalid={(formErrors.UserName !== null) ? "true" : undefined} className="text-center m-2"><span >{formErrors.UserName}</span><br/></FormFeedback>
                           </FormGroup>
                         </Col>
                         <Col lg="6">
@@ -272,10 +348,10 @@ class Profile extends React.Component {
                               type="email"
                               required
                               label="Required"
-                              invalid={formErrors.Email !== null ? "true" : undefined}
+                              invalid={formErrors.Email !== null ? true : undefined}
                               onChange={ e=>this.onChange("Email", (Email===undefined ? profile.Email : e.target.value ))}
                             />
-                            <FormFeedback className="text-center m-2"><span >{formErrors.Email}</span><br/></FormFeedback>
+                            <FormFeedback invalid={formErrors.Email !== null ? "true" : undefined} className="text-center m-2"><span >{formErrors.Email}</span><br/></FormFeedback>
                           </FormGroup>
                         </Col>
                       </Row>
@@ -297,11 +373,11 @@ class Profile extends React.Component {
                               required
                               label="Required"
                               maxLength="50"
-                              invalid={formErrors.FullName !== null ? "true" : undefined}
+                              invalid={formErrors.FullName !== null ? true : undefined}
                               onChange={ e=>this.onChange("FullName", e.target.value)}
                             />
-                            <FormFeedback valid />
-                            <FormFeedback className="text-center m-2"><span >{formErrors.FullName}</span><br/></FormFeedback>
+                            <FormFeedback valid={formErrors.FullName === null ? "true" : undefined} />
+                            <FormFeedback invalid={formErrors.FullName !== null ? "true" : undefined} className="text-center m-2"><span >{formErrors.FullName}</span><br/></FormFeedback>
                           </FormGroup>
                         </Col>
                       </Row>
@@ -332,12 +408,12 @@ class Profile extends React.Component {
                               label="Required"
                               maxLength="100"
                               // valid={formErrors.MainAddress === null ? true : undefined}
-                              invalid={formErrors.MainAddress !== null ? "true" : undefined}
+                              invalid={formErrors.MainAddress !== null ? true : undefined}
                               onChange={ e=>this.onChange("MainAddress", e.target.value)}
                               // style={{border:"2px solid"}}
                             />
                             {/* <FormFeedback valid /> */}
-                            <FormFeedback invalid className="text-center m-2"><span >{formErrors.MainAddress}</span><br/></FormFeedback>
+                            <FormFeedback invalid={formErrors.MainAddress !== null ? "true" : undefined} className="text-center m-2"><span >{formErrors.MainAddress}</span><br/></FormFeedback>
                           </FormGroup>
                         </Col>
                       </Row>
@@ -381,10 +457,10 @@ class Profile extends React.Component {
                               label="Required"
                               maxLength="100"
                               // valid={formErrors.City === null ? true : undefined}
-                              invalid={formErrors.City !== null ? "true" : undefined}
+                              invalid={formErrors.City !== null ? true : undefined}
                               onChange={ e=>this.onChange("City", e.target.value)}
                             />
-                            <FormFeedback invalid className="text-center m-2"><span >{formErrors.City}</span><br/></FormFeedback>
+                            <FormFeedback invalid={formErrors.City !== null ? "true" : undefined} className="text-center m-2"><span >{formErrors.City}</span><br/></FormFeedback>
                           </FormGroup>
                         </Col>
                         <Col lg="4">
@@ -395,19 +471,21 @@ class Profile extends React.Component {
                             >
                               State <span className="text-muted">*</span>
                             </label>
-                            <Input
+                            <Select options={stateOptions} isSearchable={true} onChange={opt =>this.onChange("State", opt)} tabSelectsValue={true} maxLength="2" value={State}/>
+                            {/* <Input
                               value={State===undefined ? profile.State : State}
                               id="input-state"
                               placeholder="State"
                               name="select"
                               type="select"
-                              maxLength="2"
-                              invalid={formErrors.State !== null ? "true" : undefined}
+                              
+                              list="states"
+                              invalid={formErrors.State !== null ? true : undefined}
                               onChange={ e=>this.onChange("State", e.target.value)}
                             >
-                              {this.createStates(json)}
-                            </Input>
-                            <FormFeedback invalid className="text-center m-2"><span >{formErrors.State}</span><br/></FormFeedback>
+                              <datalist id="states">{this.createStates(json)}</datalist>
+                            </Input> */}
+                            <FormFeedback invalid={formErrors.State !== null ? "true" : undefined} className="text-center m-2"><span >{formErrors.State}</span><br/></FormFeedback>
                           </FormGroup>
                         </Col>
                         <Col lg="4">
@@ -419,17 +497,17 @@ class Profile extends React.Component {
                               Zipcode <span className="text-muted">*</span>
                             </label>
                             <Input
-                              value={Zipcode===undefined ? profile.Zipcode : Zipcode}
+                              value={Zipcode===0 ? profile.Zipcode : Zipcode}
                               id="input-postal-code"
                               placeholder={77894}
                               type="number"
                               maxLength="9"
                               minLength="5"
                               // valid={formErrors.Zipcode === null ? true : false}
-                              invalid={formErrors.Zipcode !== null ? "true" : undefined}
+                              invalid={formErrors.Zipcode !== null ? true : undefined}
                               onChange={ e=>this.onChange("Zipcode", e.target.value)}
                             />
-                            <FormFeedback invalid className="text-center m-2"><span >{formErrors.Zipcode}</span><br/></FormFeedback>
+                            <FormFeedback invalid={formErrors.Zipcode !== null ? "true" : undefined} className="text-center m-2"><span >{formErrors.Zipcode}</span><br/></FormFeedback>
                           </FormGroup>
                         </Col>
                       </Row>

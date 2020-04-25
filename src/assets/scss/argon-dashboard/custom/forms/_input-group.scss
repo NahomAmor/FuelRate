@@ -34,7 +34,8 @@
 
 .input-group-alternative {
     box-shadow: $input-alternative-box-shadow;
-    border: 0;
+	border: 0;
+	background-color: #ffffff;
     transition: box-shadow .15s ease;
 
     .form-control,

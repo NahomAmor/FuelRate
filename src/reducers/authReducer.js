@@ -52,7 +52,7 @@ const authReducer= (
                 ...state,
                 authError: null,
                 loggedIn: action.payload,
-                signedUp: false
+                signedUp: false,
         }
 
         case "logout":
@@ -66,10 +66,17 @@ const authReducer= (
                 loggedIn: false
         }
 
-        case "create":
-            console.log("created ");
+        case "Profile_updated":
+            console.log("Profile_updated ");
             return{
                 ...state,
+                registered: false
+        }
+        case "Profile_error":
+            console.log("Profile_updated ");
+            return{
+                ...state,
+                registered: false
         }
 
         default:

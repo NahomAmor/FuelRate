@@ -92,9 +92,10 @@ class Requester extends React.Component{
       // let formErrors = { ...this.state.formErrors };
       const { SuggestedPrice, TotalDue } = this.state;
       const {  due, suggested} = this.props.rateState;
+      console.log(SuggestedPrice, TotalDue, due, suggested )
       let info ={
-        SuggestedPrice: SuggestedPrice===undefined ? suggested : SuggestedPrice,
-        TotalDue: TotalDue===undefined ? due : TotalDue
+        SuggestedPrice: suggested,
+        TotalDue: due
       };
       this.setState({
         ...info,
@@ -143,7 +144,7 @@ class Requester extends React.Component{
       });
       if(formErrors.valid === null){
         this.props.getRequestAction(info);
-        this.props.history.push('/admin');
+        return(<Redirect to="/admin/requestForm" />);
         // <Redirect to=t/>
       
       }
@@ -151,12 +152,170 @@ class Requester extends React.Component{
 
 
     }
-    handleDateChange = date => {
-      this.setState({date});
-    };
+    // handleDateChange = (dates) => {
+    //   let items = []
+    // return dates.map((prop, key) => {
+    //   if(this.props.firebase.auth.uid === prop){console.log("HIstory: ", prop, key);}
+    //   items.push(
+    //   <tr>
+    //                   <th scope="row">
+    //                     <Media className="align-items-center">
+    //                       <a
+    //                         className="avatar rounded-circle mr-3"
+    //                         href="#pablo"
+    //                         onClick={e => e.preventDefault()}
+    //                       >
+    //                         <img
+    //                           alt="..."
+    //                           src={require("assets/img/theme/bootstrap.jpg")}
+    //                         />
+    //                       </a>
+    //                       <Media>
+    //                         <span className="mb-0 text-sm">
+    //                           {/* prop. */}
+    //                         </span>
+    //                       </Media>
+    //                     </Media>
+    //                   </th>
+    //                   <td>$2,500 USD</td>
+    //                   <td>
+    //                     <Badge color="" className="badge-dot mr-4">
+    //                       <i className="bg-warning" />
+    //                       pending
+    //                     </Badge>
+    //                   </td>
+    //                   <td>
+    //                     <div className="avatar-group">
+    //                       <a
+    //                         className="avatar avatar-sm"
+    //                         href="#pablo"
+    //                         id="tooltip731399078"
+    //                         onClick={e => e.preventDefault()}
+    //                       >
+    //                         <img
+    //                           alt="..."
+    //                           className="rounded-circle"
+    //                           src={require("assets/img/theme/team-1-800x800.jpg")}
+    //                         />
+    //                       </a>
+    //                       {/* <UncontrolledTooltip
+    //                         delay={0}
+    //                         target="tooltip731399078"
+    //                       >
+    //                         2,652 G
+    //                       </UncontrolledTooltip>
+    //                       <a
+    //                         className="avatar avatar-sm"
+    //                         href="#pablo"
+    //                         id="tooltip491083084"
+    //                         onClick={e => e.preventDefault()}
+    //                       >
+    //                         <img
+    //                           alt="..."
+    //                           className="rounded-circle"
+    //                           src={require("assets/img/theme/team-2-800x800.jpg")}
+    //                         />
+    //                       </a>
+    //                       <UncontrolledTooltip
+    //                         delay={0}
+    //                         target="tooltip491083084"
+    //                       >
+    //                         1,252 G
+    //                       </UncontrolledTooltip>
+    //                       <a
+    //                         className="avatar avatar-sm"
+    //                         href="#pablo"
+    //                         id="tooltip528540780"
+    //                         onClick={e => e.preventDefault()}
+    //                       >
+    //                         <img
+    //                           alt="..."
+    //                           className="rounded-circle"
+    //                           src={require("assets/img/theme/team-3-800x800.jpg")}
+    //                         />
+    //                       </a>
+    //                       <UncontrolledTooltip
+    //                         delay={0}
+    //                         target="tooltip528540780"
+    //                       >
+    //                         952 G
+    //                       </UncontrolledTooltip> */}
+    //                       {/* <a
+    //                         className="avatar avatar-sm"
+    //                         href="#pablo"
+    //                         id="tooltip237898869"
+    //                         onClick={e => e.preventDefault()}
+    //                       >
+    //                         <img
+    //                           alt="..."
+    //                           className="rounded-circle"
+    //                           src={require("assets/img/theme/team-4-800x800.jpg")}
+    //                         />
+    //                       </a>
+    //                       <UncontrolledTooltip
+    //                         delay={0}
+    //                         target="tooltip237898869"
+    //                       >
+    //                         Jessica Doe
+    //                       </UncontrolledTooltip> */}
+    //                     </div>
+    //                   </td>
+    //                   <td>
+    //                     <div className="d-flex align-items-center">
+    //                       <span className="mr-2">100%</span>
+    //                       <div>
+    //                         <Progress
+    //                           max="100"
+    //                           value="100"
+    //                           barClassName="bg-warning"
+    //                         />
+    //                       </div>
+    //                     </div>
+    //                   </td>
+    //                   <td className="text-right">
+    //                     <UncontrolledDropdown>
+    //                       <DropdownToggle
+    //                         className="btn-icon-only text-light"
+    //                         href="#pablo"
+    //                         role="button"
+    //                         size="sm"
+    //                         color=""
+    //                         onClick={e => e.preventDefault()}
+    //                       >
+    //                         <i className="fas fa-ellipsis-v" />
+    //                       </DropdownToggle>
+    //                       <DropdownMenu className="dropdown-menu-arrow" right>
+    //                         <DropdownItem
+    //                           href="#pablo"
+    //                           onClick={e => e.preventDefault()}
+    //                         >
+    //                           Revisit
+    //                         </DropdownItem>
+    //                         <DropdownItem
+    //                           href="#pablo"
+    //                           onClick={e => e.preventDefault()}
+    //                         >
+    //                           Delete
+    //                         </DropdownItem>
+    //                         <DropdownItem
+    //                           href="#pablo"
+    //                           onClick={e => e.preventDefault()}
+    //                         >
+    //                           Something Else
+    //                         </DropdownItem>
+    //                       </DropdownMenu>
+    //                     </UncontrolledDropdown>
+    //                   </td>
+    //                 </tr>
+    //                 );
+        
+    //                 return items;
+                      
+    //               })
+    // };
   render() {
     const { profile, predicted, rateState } = this.props;
-    const {  due, suggested} = this.props.rateState;
+    const {  due, suggested, Requests} = this.props;
     if (predicted && !due){
       this.props.history.push('/admin/requestsForm');
     }
@@ -286,9 +445,9 @@ class Requester extends React.Component{
                             <Input
                               disabled
                               className="form-control-alternative"
-                              defaultValue={suggested ? suggested :"$ "+2000}
+                              value={suggested ? parseFloat(suggested) :"$ "+2000}
                               id="input-currency"
-                              placeholder= {2000}
+                              // placeholder= {2000}
                               type="currency"
                               required
                               label="Required"
@@ -310,9 +469,9 @@ class Requester extends React.Component{
                             <Input
                               disabled
                               className="form-control-alternative"
-                              defaultValue={due ? due : "$ "+2000}
+                              value={due ? due : "$ "+2000}
                               id="input-currency"
-                              placeholder={1000}
+                              // placeholder={1000}
                               type="currency"
                               required
                               label="Required"
@@ -408,6 +567,7 @@ class Requester extends React.Component{
                     </tr>
                   </thead>
                   <tbody>
+                    {/* {Requests? this.handleDateChange(Requests): undefined} */}
                     <tr>
                       <th scope="row">
                         <Media className="align-items-center">
@@ -1173,9 +1333,11 @@ const mapStateToProps = (state) => {
   return{
     ...state,
     profile: state.firebase.profile,
-    Requests: state.firebase,
+    Requests: state.firestore.data.Requests,
     predicted: state.rateState.predicted,
-    rateState: state.rateState
+    rateState: state.rateState,
+    due: state.rateState.due,
+    suggested: state.rateState.suggested
   }
 };
 
