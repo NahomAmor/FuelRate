@@ -10,6 +10,7 @@ const rateState = {
     getProfile: false,
     suggested: 0,
     request: null,
+    formula: null,
     due: 0
 }
 
@@ -42,7 +43,8 @@ const rateReducer =(
             console.log("addRequest ", action.payload);
             return{
                 ...state,
-                predicted: action.payload
+                predicted: action.payload,
+                request: action.request
             }
         case "getRequest":
             console.log("getRequest ", action.payload, action.request, action.suggested, action.due);
@@ -52,7 +54,8 @@ const rateReducer =(
                 predicted: action.payload,
                 request: action.request,
                 suggested: action.suggested.toFixed(2),
-                due: action.due.toFixed(2)
+                due: action.due.toFixed(2),
+                formula: action.formula
             } 
         default:
             return state;
